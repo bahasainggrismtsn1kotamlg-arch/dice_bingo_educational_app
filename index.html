@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DICE BINGO — Interactive English Learning & Dice Challenge</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fdf4f8',
+                            100: '#fbe8f2',
+                            500: '#ec4899',
+                            600: '#db2777',
+                            700: '#be185d',
+                            800: '#9d174d',
+                            900: '#831843',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
+        @keyframes dice-roll {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(90deg) scale(1.1); }
+            50% { transform: rotate(180deg); }
+            75% { transform: rotate(270deg) scale(0.9); }
+            100% { transform: rotate(360deg); }
+        }
+        .rolling { animation: dice-roll 0.5s ease-in-out; }
+    </style>
+</head>
+<body class="h-full bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 transition-colors duration-200 overflow-hidden">
+
+    <div id="app" class="h-full flex flex-col">
+        <!-- Dynamic Content Rendered Here -->
+    </div>
+
+    <script>
+        const translations = {
+            id: {
+                welcome: "WELCOME TO DICE BINGO!",
+                subtitle: "Roll the Dice, Learn English, and Get Bingo!",
+                nameLabel: "Nama Murid / Student Name",
+                namePlaceholder: "Masukkan nama lengkap...",
+                classLabel: "Kelas / Class",
+                attendanceLabel: "Nomor Presensi / Attendance Number",
+                attendancePlaceholder: "Contoh: 15",
+                schoolLabel: "Asal Madrasah/Sekolah / Madrasah or School Name",
+                schoolPlaceholder: "Contoh: MTsN 1 Malang",
+                continueBtn: "Continue / Lanjutkan",
+                langToggle: "Switch to English",
+                createdBy: "Created by Ahmad Budi Leksono",
+                dashboard: "Dashboard",
+                profile: "Student Profile",
+                learn: "Learn & Practice",
+                play: "Dice Bingo Game",
+                vocabBank: "Vocabulary Bank",
+                journal: "My Learning Journal",
+                progress: "My Progress",
+                achievements: "Achievements & Badges",
+                leaderboard: "Leaderboard",
+                certificates: "Certificates",
+                settings: "Settings",
+                about: "About DICE BINGO",
+                help: "Help & Instructions",
+                logout: "Keluar Sesi",
+                welcomeBack: "Selamat datang kembali,",
+                activeLevel: "Tingkat Aktif",
+                totalDone: "Soal Dikerjakan",
+                accuracy: "Akurasi",
+                totalScore: "Total Skor",
+                streak: "Streak Benar",
+                studyTime: "Waktu Belajar",
+                bingosCompleted: "Bingo Selesai",
+                startQuizBtn: "Mulai Lempar Dadu & Main",
+                rollDiceBtn: "Lempar Dadu (Roll Dice)",
+                checkAnswer: "Periksa Jawaban",
+                nextQuestion: "Soal Berikutnya",
+                hintBtn: "Petunjuk (Hint)",
+                score: "Skor",
+                correct: "Benar! (Correct!)",
+                incorrect: "Kurang Tepat! (Incorrect!)",
+                explanation: "Penjelasan",
+                finishSession: "Selesaikan Sesi",
+                sessionResults: "Hasil Sesi Dice Bingo",
+                tryAgain: "Coba Lagi",
+                backToDashboard: "Kembali ke Dashboard",
+                certificateTitle: "Certificate of Achievement",
+                certText: "Sertifikat ini diberikan dengan bangga kepada",
+                certBody: "atas keberhasilan menyelesaikan tantangan lempar dadu dan papan Bingo, serta menunjukkan pemahaman luar biasa dalam Dice Bingo English Learning.",
+                printCert: "Cetak / Simpan PDF",
+                resetData: "Reset Progres",
+                resetConfirm: "Apakah Anda yakin ingin mereset seluruh data permainan?",
+                themeToggle: "Tema Gelap / Terang",
+                searchVocab: "Cari kosakata...",
+                selectLevelTitle: "Pilih Tingkat Kesulitan (Level)",
+                selectModeTitle: "Pilih Mode Bingo & Tantangan"
+            },
+            en: {
+                welcome: "WELCOME TO DICE BINGO!",
+                subtitle: "Roll the Dice, Learn English, and Get Bingo!",
+                nameLabel: "Student Name",
+                namePlaceholder: "Enter full name...",
+                classLabel: "Class",
+                attendanceLabel: "Attendance Number",
+                attendancePlaceholder: "e.g., 15",
+                schoolLabel: "Madrasah or School Name",
+                schoolPlaceholder: "e.g., MTsN 1 Malang",
+                continueBtn: "Continue",
+                langToggle: "Ubah ke Bahasa Indonesia",
+                createdBy: "Created by Ahmad Budi Leksono",
+                dashboard: "Dashboard",
+                profile: "Student Profile",
+                learn: "Learn & Practice",
+                play: "Dice Bingo Game",
+                vocabBank: "Vocabulary Bank",
+                journal: "My Learning Journal",
+                progress: "My Progress",
+                achievements: "Achievements & Badges",
+                leaderboard: "Leaderboard",
+                certificates: "Certificates",
+                settings: "Settings",
+                about: "About DICE BINGO",
+                help: "Help & Instructions",
+                logout: "Exit Session",
+                welcomeBack: "Welcome back,",
+                activeLevel: "Active Level",
+                totalDone: "Questions Done",
+                accuracy: "Accuracy",
+                totalScore: "Total Score",
+                streak: "Streak",
+                studyTime: "Study Time",
+                bingosCompleted: "Bingos Completed",
+                startQuizBtn: "Roll Dice & Start Playing",
+                rollDiceBtn: "Roll Dice",
+                checkAnswer: "Check Answer",
+                nextQuestion: "Next Question",
+                hintBtn: "Hint",
+                score: "Score",
+                correct: "Correct!",
+                incorrect: "Not quite!",
+                explanation: "Explanation",
+                finishSession: "Finish Session",
+                sessionResults: "Dice Bingo Session Results",
+                tryAgain: "Try Again",
+                backToDashboard: "Back to Dashboard",
+                certificateTitle: "Certificate of Achievement",
+                certText: "This certificate is proudly presented to",
+                certBody: "for successfully completing dice challenges and bingo boards, demonstrating exceptional proficiency in Dice Bingo English Learning.",
+                printCert: "Print / Save PDF",
+                resetData: "Reset Progress",
+                resetConfirm: "Are you sure you want to reset all game progress?",
+                themeToggle: "Dark / Light Theme",
+                searchVocab: "Search vocabulary...",
+                selectLevelTitle: "Select Difficulty Level",
+                selectModeTitle: "Select Bingo Mode & Challenge"
+            }
+        };
+
+        const questionBank = [
+            // STARTER LEVEL
+            { id: "DB-START-001", level: "STARTER", mode: "Vocabulary Bingo", question: "Choose the correct word for the picture of an apple.", options: ["Apple", "Table", "Pencil", "Window"], correctAnswerIndex: 0, explanation: "Apple is a sweet red or green fruit.", hint: "Grows on trees and teachers love them.", vocabulary: "Apple", translation: "Apel" },
+            { id: "DB-START-002", level: "STARTER", mode: "Spelling Bingo", question: "Which spelling is correct for the number '5'?", options: ["Fife", "Five", "Fiv", "Faiv"], correctAnswerIndex: 1, explanation: "The correct spelling is F-I-V-E.", hint: "Count the fingers on one hand.", vocabulary: "Five", translation: "Lima" },
+            { id: "DB-START-003", level: "STARTER", mode: "Color Bingo", question: "What color is a ripe banana?", options: ["Red", "Blue", "Yellow", "Green"], correctAnswerIndex: 2, explanation: "Ripe bananas have a bright yellow skin.", hint: "The color of the sun and lemons.", vocabulary: "Yellow", translation: "Kuning" },
+            { id: "DB-START-004", level: "STARTER", mode: "Animal Bingo", question: "Which animal says 'Meow'?", options: ["Dog", "Cat", "Cow", "Duck"], correctAnswerIndex: 1, explanation: "A cat makes a meow sound.", hint: "A furry pet that purrs.", vocabulary: "Cat", translation: "Kucing" },
+            { id: "DB-START-005", level: "STARTER", mode: "School Bingo", question: "What do you use to write on paper at school?", options: ["Pencil", "Shoe", "Plate", "Bed"], correctAnswerIndex: 0, explanation: "A pencil is used for writing and sketching.", hint: "Has lead inside and an eraser on top.", vocabulary: "Pencil", translation: "Pensil" },
+
+            // BEGINNER LEVEL
+            { id: "DB-BEG-001", level: "BEGINNER", mode: "Grammar Bingo", question: "What is the opposite of 'big'?", options: ["Tall", "Small", "Long", "Wide"], correctAnswerIndex: 1, explanation: "Big and small are direct opposites.", hint: "Tiny or little in size.", vocabulary: "Small", translation: "Kecil" },
+            { id: "DB-BEG-002", level: "BEGINNER", mode: "Vocabulary Bingo", question: "Where do you buy groceries and food items?", options: ["Supermarket", "Hospital", "Library", "Garage"], correctAnswerIndex: 0, explanation: "A supermarket is a large store selling food and household goods.", hint: "A big shop with shopping carts.", vocabulary: "Supermarket", translation: "Supermarket / Swalayan" },
+            { id: "DB-BEG-003", level: "BEGINNER", mode: "Action Bingo", question: "What do you do with a book?", options: ["Eat", "Read", "Drive", "Sleep"], correctAnswerIndex: 1, explanation: "You read stories and information in books.", hint: "Turning pages with your eyes.", vocabulary: "Read", translation: "Membaca" },
+            { id: "DB-BEG-004", level: "BEGINNER", mode: "Family Bingo", question: "Who is your mother's father?", options: ["Uncle", "Brother", "Grandfather", "Cousin"], correctAnswerIndex: 2, explanation: "Your mother's or father's father is your grandfather.", hint: "Elder male relative.", vocabulary: "Grandfather", translation: "Kakek" },
+            { id: "DB-BEG-005", level: "BEGINNER", mode: "Time Bingo", question: "How many days are in a single week?", options: ["5", "6", "7", "10"], correctAnswerIndex: 2, explanation: "There are 7 days in a week from Monday to Sunday.", hint: "Starts on Monday and ends on Sunday.", vocabulary: "Week", translation: "Minggu / Pekan" },
+
+            // ELEMENTARY LEVEL
+            { id: "DB-ELEM-001", level: "ELEMENTARY", mode: "Grammar Bingo", question: "Complete the sentence: 'She ___ to school every day.'", options: ["Go", "Goes", "Going", "Gone"], correctAnswerIndex: 1, explanation: "For third-person singular (she) in Present Simple, add -es to 'go'.", hint: "Verb form ending in -es.", vocabulary: "Goes", translation: "Pergi" },
+            { id: "DB-ELEM-002", level: "ELEMENTARY", mode: "Vocabulary Bingo", question: "Which word is a synonym for 'fast'?", options: ["Slow", "Quick", "Heavy", "Dark"], correctAnswerIndex: 1, explanation: "Quick and fast both describe high speed.", hint: "Rapid movement.", vocabulary: "Quick", translateY: "Cepat", translation: "Cepat" },
+            { id: "DB-ELEM-003", level: "ELEMENTARY", mode: "Listening Bingo", question: "Choose the correct past tense of 'eat':", options: ["Eated", "Ate", "Eaten", "Eating"], correctAnswerIndex: 1, explanation: "The irregular past tense of 'eat' is 'ate'.", hint: "Past form of consuming food.", vocabulary: "Ate", translation: "Makan (Bentuk Lampau)" },
+            { id: "DB-ELEM-004", level: "ELEMENTARY", mode: "Reading Bingo", question: "What do you wear on your feet when running outside?", options: ["Hat", "Gloves", "Sneakers", "Scarf"], correctAnswerIndex: 2, explanation: "Sneakers are athletic shoes designed for running and sports.", hint: "Sport shoes with laces.", vocabulary: "Sneakers", translation: "Sepatu Olahraga" },
+            { id: "DB-ELEM-005", level: "ELEMENTARY", mode: "Spelling Bingo", question: "Choose the correctly spelled word:", options: ["Berifull", "Beautiful", "Beutifil", "Bautiful"], correctAnswerIndex: 1, explanation: "The correct spelling is B-E-A-U-T-I-F-U-L.", hint: "Pleasing to the senses or mind.", vocabulary: "Beautiful", translation: "Indah / Cantik" },
+
+            // PRE-INTERMEDIATE LEVEL
+            { id: "DB-PRE-001", level: "PRE-INTERMEDIATE", mode: "Grammar Bingo", question: "Choose the correct sentence in the past tense:", options: ["They was happy yesterday.", "They were happy yesterday.", "They is happy yesterday.", "They be happy yesterday."], correctAnswerIndex: 1, explanation: "Plural subject 'They' takes 'were' in the past tense.", hint: "Past form of 'to be' for plural.", vocabulary: "Were", translation: "Adalah (Lampau Jamak)" },
+            { id: "DB-PRE-002", level: "PRE-INTERMEDIATE", mode: "Vocabulary Bingo", question: "What does 'courageous' mean?", options: ["Afraid", "Brave", "Lazy", "Angry"], correctAnswerIndex: 1, explanation: "Courageous means possessing or showing bravery in facing danger.", hint: "Not showing fear.", vocabulary: "Brave", translation: "Berani" },
+            { id: "DB-PRE-003", level: "PRE-INTERMEDIATE", mode: "Reading Bingo", question: "Birds build their homes in trees called...", options: ["Hives", "Nests", "Caves", "Burrows"], correctAnswerIndex: 1, explanation: "Birds construct nests using twigs and grass to lay eggs.", hint: "Branch home for birds.", vocabulary: "Nest", translation: "Sarang Burung" },
+            { id: "DB-PRE-004", level: "PRE-INTERMEDIATE", mode: "Listening Bingo", question: "Which conjunction correctly shows contrast?", options: ["Because", "Although", "And", "So"], correctAnswerIndex: 1, explanation: "Although introduces a contrasting clause.", hint: "Even though.", vocabulary: "Although", translation: "Meskipun" },
+            { id: "DB-PRE-005", level: "PRE-INTERMEDIATE", mode: "Vocabulary Bingo", question: "An instrument used to measure temperature is a...", options: ["Compass", "Thermometer", "Ruler", "Clock"], correctAnswerIndex: 1, explanation: "A thermometer measures degrees of heat or cold.", hint: "Used when you have a fever.", vocabulary: "Thermometer", translation: "Termometer" },
+
+            // INTERMEDIATE LEVEL
+            { id: "DB-INT-001", level: "INTERMEDIATE", mode: "Reading Bingo", question: "Maya checked the weather forecast and saw that heavy rain was expected. Why did she take an umbrella?", options: ["She wanted to go swimming.", "She expected it to rain.", "She lost her bag.", "She wanted to buy a hat."], correctAnswerIndex: 1, explanation: "Heavy rain forecast implies she needed protection against rain.", hint: "Protection from downpours.", vocabulary: "Umbrella", translation: "Payung" },
+            { id: "DB-INT-002", level: "INTERMEDIATE", mode: "Grammar Bingo", question: "Choose the correct passive voice form: 'The chef cooks the meal.'", options: ["The meal is cooked by the chef.", "The meal was cooked by the chef.", "The meal has cooked the chef.", "The meal cooks the chef."], correctAnswerIndex: 0, explanation: "Present simple passive uses 'is/are + past participle'.", hint: "Object becomes subject with 'is cooked'.", vocabulary: "Passive Voice", translation: "Kalimat Pasif" },
+            { id: "DB-INT-003", level: "INTERMEDIATE", mode: "Vocabulary Bingo", question: "What is a synonym for 'exhausted'?", options: ["Energetic", "Tired", "Excited", "Happy"], correctAnswerIndex: 1, explanation: "Exhausted means drained of energy, synonymous with extremely tired.", hint: "Needing deep sleep.", vocabulary: "Exhausted", translation: "Sangat Kelelahan" },
+            { id: "DB-INT-004", level: "INTERMEDIATE", mode: "Grammar Bingo", question: "Identify the relative pronoun in: 'The boy who won the race is my friend.'", options: ["Boy", "Who", "Race", "Friend"], correctAnswerIndex: 1, explanation: "'Who' is the relative pronoun referring to 'the boy'.", hint: "Pronoun for people.", vocabulary: "Relative Pronoun", translation: "Kata Ganti Relatif" },
+            { id: "DB-INT-005", level: "INTERMEDIATE", mode: "Vocabulary Bingo", question: "What does 'benevolent' mean?", options: ["Kind and generous", "Cruel and harsh", "Mysterious", "Lazy"], correctAnswerIndex: 0, explanation: "Benevolent means well-meaning and kindly disposed.", hint: "Doing good deeds.", vocabulary: "Benevolent", translation: "Dermawan / Baik Hati" },
+
+            // ADVANCED LEVEL
+            { id: "DB-ADV-001", level: "ADVANCED", mode: "Grammar Bingo", question: "Choose the best completion: 'Had I known about the schedule change, I ___ earlier.'", options: ["would leave", "would have left", "will leave", "have left"], correctAnswerIndex: 1, explanation: "Third conditional inverted structure requires 'would have + past participle'.", hint: "Conditional past counterfactual.", vocabulary: "Third Conditional", translation: "Kondisional Ketiga" },
+            { id: "DB-ADV-002", level: "ADVANCED", mode: "Vocabulary Bingo", question: "Which word means 'lasting for a very short time'?", options: ["Permanent", "Ephemeral", "Eternal", "Perpetual"], correctAnswerIndex: 1, explanation: "Ephemeral describes something transient or short-lived.", hint: "Fleeting moment.", vocabulary: "Ephemeral", translation: "Fana / Berumur Pendek" },
+            { id: "DB-ADV-003", level: "ADVANCED", mode: "Reading Bingo", question: "Identify the error in: 'Neither of the students have submitted their assignment.'", options: ["Neither", "have", "submitted", "assignment"], correctAnswerIndex: 1, explanation: "'Neither' is singular, so it requires 'has' instead of 'have'.", hint: "Subject-verb agreement with 'Neither'.", vocabulary: "Agreement", translation: "Kesesuaian Subjek-Verba" },
+            { id: "DB-ADV-004", level: "ADVANCED", mode: "Vocabulary Bingo", question: "What is the meaning of 'obfuscate'?", options: ["To clarify", "To confuse or bewilder", "To illuminate", "To accelerate"], correctAnswerIndex: 1, explanation: "Obfuscate means to make unclear, opaque, or bewildering.", hint: "Deliberately confusing.", vocabulary: "Obfuscate", translation: "Mengaburkan / Membingungkan" },
+            { id: "DB-ADV-005", level: "ADVANCED", mode: "Grammar Bingo", question: "Choose the correct prepositional idiom: 'She succeeded ___ passing the exam.'", options: ["on", "in", "at", "with"], correctAnswerIndex: 1, explanation: "The verb 'succeed' is correctly followed by the preposition 'in + gerund'.", hint: "Preposition used with 'succeed'.", vocabulary: "Prepositional Idiom", translation: "Idiom Preposisi" }
+        ];
+
+        let appState = {
+            currentView: 'welcome', // 'welcome', 'dashboard', 'profile', 'learn', 'play', 'bingoGrid', 'vocabBank', 'journal', 'progress', 'achievements', 'certificates', 'settings', 'about', 'help'
+            lang: 'id',
+            darkMode: false,
+            student: {
+                name: '',
+                className: '7',
+                attendanceNumber: '',
+                school: ''
+            },
+            stats: {
+                activeLevel: 'STARTER',
+                totalDone: 0,
+                correctCount: 0,
+                incorrectCount: 0,
+                totalScore: 0,
+                streak: 0,
+                studySeconds: 0,
+                bingosCompleted: 0,
+                history: [],
+                badges: [
+                    { id: 'first_roll', title: 'First Roll', desc: 'Menyelesaikan sesi lempar dadu pertama', earned: false, icon: 'fa-dice' },
+                    { id: 'bingo_master', title: 'Bingo Master', desc: 'Menyelesaikan 3 papan Bingo', earned: false, icon: 'fa-award' },
+                    { id: 'word_connector', title: 'Word Connector', desc: 'Mencapai skor 50 poin', earned: false, icon: 'fa-link' },
+                    { id: 'accuracy_star', title: 'Accuracy Star', desc: 'Mencapai akurasi 100% dalam sesi', earned: false, icon: 'fa-star' }
+                ]
+            },
+            game: {
+                level: 'STARTER',
+                mode: 'Vocabulary Bingo',
+                diceValue: 1,
+                isRolling: false,
+                bingoBoard: [], // 9 items (3x3)
+                selectedCell: null,
+                currentQuestion: null,
+                selectedOption: null,
+                isAnswerChecked: false,
+                isCorrect: false,
+                scoreThisSession: 0,
+                correctThisSession: 0,
+                incorrectThisSession: 0,
+                showHint: false,
+                sessionSeconds: 0
+            }
+        };
+
+        // Local Storage persistence
+        function loadState() {
+            try {
+                const saved = localStorage.getItem('dice_bingo_app_state');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    appState = { ...appState, ...parsed };
+                }
+            } catch (e) {
+                console.error("Could not load local storage", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem('dice_bingo_app_state', JSON.stringify(appState));
+            } catch (e) {
+                console.error("Could not save local storage", e);
+            }
+        }
+
+        // Global Timer
+        let globalTimer = null;
+        function startGlobalTimer() {
+            if (globalTimer) clearInterval(globalTimer);
+            globalTimer = setInterval(() => {
+                appState.stats.studySeconds++;
+                if (appState.currentView === 'bingoGrid') {
+                    appState.game.sessionSeconds++;
+                }
+                saveState();
+            }, 1000);
+        }
+
+        function render() {
+            const root = document.getElementById('app');
+            if (!root) return;
+
+            if (appState.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+
+            let html = '';
+            if (appState.currentView === 'welcome') {
+                html = renderWelcomeView();
+            } else {
+                html = `
+                    <div class="flex h-full overflow-hidden">
+                        ${renderSidebar()}
+                        <div class="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar">
+                            ${renderHeaderBar()}
+                            <main class="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto">
+                                ${renderMainContent()}
+                            </main>
+                        </div>
+                    </div>
+                `;
+            }
+            root.innerHTML = html;
+            attachEventListeners();
+        }
+
+        function renderWelcomeView() {
+            const t = translations[appState.lang];
+            return `
+                <div class="min-h-full flex items-center justify-center p-4 bg-gradient-to-br from-pink-900 via-pink-800 to-slate-900">
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl shadow-2xl max-w-lg w-full border border-pink-500/20">
+                        <div class="text-center mb-6">
+                            <div class="inline-flex items-center justify-center w-16 h-16 bg-pink-600 text-white rounded-2xl text-2xl font-bold mb-4 shadow-lg shadow-pink-500/30">
+                                <i class="fa-solid fa-dice"></i>
+                            </div>
+                            <h1 class="text-2xl md:text-3xl font-extrabold text-slate-900 dark:text-white mb-2 tracking-tight">${t.welcome}</h1>
+                            <p class="text-slate-600 dark:text-slate-300 text-sm">${t.subtitle}</p>
+                        </div>
+
+                        <div class="flex justify-end mb-4">
+                            <button id="lang-toggle-btn" class="text-xs px-3 py-1.5 bg-pink-50 dark:bg-slate-700 text-pink-600 dark:text-pink-300 rounded-lg font-medium hover:bg-pink-100 transition">
+                                <i class="fa-solid fa-language mr-1"></i> ${t.langToggle}
+                            </button>
+                        </div>
+
+                        <form id="identity-form" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.nameLabel}</label>
+                                <input type="text" id="input-name" required placeholder="${t.namePlaceholder}" value="${appState.student.name}" 
+                                    class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-pink-500 outline-none text-sm transition">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.classLabel}</label>
+                                    <select id="input-class" class="w-full px-3 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-pink-500 outline-none text-sm transition">
+                                        ${['4','5','6','7','8','9','10','11','12'].map(c => `<option value="${c}" ${appState.student.className === c ? 'selected' : ''}>Kelas ${c}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.attendanceLabel}</label>
+                                    <input type="text" id="input-attendance" placeholder="${t.attendancePlaceholder}" value="${appState.student.attendanceNumber}" 
+                                        class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-pink-500 outline-none text-sm transition">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.schoolLabel}</label>
+                                <input type="text" id="input-school" required placeholder="${t.schoolPlaceholder}" value="${appState.student.school}" 
+                                    class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-pink-500 outline-none text-sm transition">
+                            </div>
+
+                            <button type="submit" class="w-full py-3.5 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl shadow-lg shadow-pink-600/30 transition duration-200 text-sm tracking-wide">
+                                ${t.continueBtn} <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </form>
+
+                        <div class="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700 text-center text-xs text-slate-500 dark:text-slate-400">
+                            ${t.createdBy}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSidebar() {
+            const t = translations[appState.lang];
+            const menuItems = [
+                { id: 'dashboard', label: t.dashboard, icon: 'fa-house' },
+                { id: 'profile', label: t.profile, icon: 'fa-id-card' },
+                { id: 'learn', label: t.learn, icon: 'fa-book-open' },
+                { id: 'play', label: t.play, icon: 'fa-dice' },
+                { id: 'vocabBank', label: t.vocabBank, icon: 'fa-box-archive' },
+                { id: 'journal', label: t.journal, icon: 'fa-book-bookmark' },
+                { id: 'progress', label: t.progress, icon: 'fa-chart-line' },
+                { id: 'achievements', label: t.achievements, icon: 'fa-award' },
+                { id: 'certificates', label: t.certificates, icon: 'fa-certificate' },
+                { id: 'settings', label: t.settings, icon: 'fa-gear' },
+                { id: 'about', label: t.about, icon: 'fa-circle-info' }
+            ];
+
+            return `
+                <aside class="w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col hidden md:flex">
+                    <div class="p-5 border-b border-slate-200 dark:border-slate-700 flex items-center space-x-3">
+                        <div class="w-10 h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center font-bold text-lg shadow-md shadow-pink-500/20">
+                            <i class="fa-solid fa-dice"></i>
+                        </div>
+                        <div>
+                            <span class="font-extrabold text-slate-900 dark:text-white tracking-wide block text-base">DICE BINGO</span>
+                            <span class="text-[10px] text-pink-600 dark:text-pink-400 font-semibold tracking-wider uppercase">English Learning</span>
+                        </div>
+                    </div>
+
+                    <nav class="flex-1 overflow-y-auto p-3 space-y-1 custom-scrollbar">
+                        ${menuItems.map(item => `
+                            <button data-nav="${item.id}" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition ${appState.currentView === item.id ? 'bg-pink-600 text-white shadow-md shadow-pink-600/20' : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50'}">
+                                <i class="fa-solid ${item.icon} w-5 text-center"></i>
+                                <span class="truncate">${item.label}</span>
+                            </button>
+                        `).join('')}
+                    </nav>
+
+                    <div class="p-3 border-t border-slate-200 dark:border-slate-700">
+                        <button id="sidebar-logout" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition">
+                            <i class="fa-solid fa-right-from-bracket w-5 text-center"></i>
+                            <span>${t.logout}</span>
+                        </button>
+                    </div>
+                </aside>
+            `;
+        }
+
+        function renderHeaderBar() {
+            const t = translations[appState.lang];
+            return `
+                <header class="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 md:px-8 py-3 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <h2 class="text-base md:text-lg font-bold text-slate-900 dark:text-white capitalize">${appState.currentView.replace(/([A-Z])/g, ' $1')}</h2>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                        <button id="header-lang-toggle" class="text-xs px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium hover:bg-slate-200 transition">
+                            <i class="fa-solid fa-language mr-1"></i> ${appState.lang === 'id' ? 'EN' : 'ID'}
+                        </button>
+                        <button id="header-theme-toggle" class="text-xs px-2.5 py-1.5 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg font-medium hover:bg-slate-200 transition">
+                            <i class="fa-solid ${appState.darkMode ? 'fa-sun' : 'fa-moon'}"></i>
+                        </button>
+                        <div class="flex items-center space-x-2 pl-2 border-l border-slate-200 dark:border-slate-700">
+                            <div class="w-8 h-8 rounded-full bg-pink-600 text-white font-bold flex items-center justify-center text-xs">
+                                ${appState.student.name ? appState.student.name.charAt(0).toUpperCase() : 'S'}
+                            </div>
+                            <span class="text-xs font-semibold text-slate-700 dark:text-slate-300 hidden sm:inline">${appState.student.name || 'Student'}</span>
+                        </div>
+                    </div>
+                </header>
+            `;
+        }
+
+        function renderMainContent() {
+            switch (appState.currentView) {
+                case 'dashboard': return renderDashboardView();
+                case 'profile': return renderProfileView();
+                case 'learn': return renderLearnView();
+                case 'play': return renderPlayView();
+                case 'bingoGrid': return renderBingoGridView();
+                case 'vocabBank': return renderVocabBankView();
+                case 'journal': return renderJournalView();
+                case 'progress': return renderProgressView();
+                case 'achievements': return renderAchievementsView();
+                case 'certificates': return renderCertificatesView();
+                case 'settings': return renderSettingsView();
+                case 'about': return renderAboutView();
+                default: return renderDashboardView();
+            }
+        }
+
+        function renderDashboardView() {
+            const t = translations[appState.lang];
+            const accuracy = appState.stats.totalDone > 0 ? Math.round((appState.stats.correctCount / appState.stats.totalDone) * 100) : 0;
+            const levels = ['STARTER', 'BEGINNER', 'ELEMENTARY', 'PRE-INTERMEDIATE', 'INTERMEDIATE', 'ADVANCED'];
+
+            return `
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-r from-pink-600 to-pink-800 rounded-2xl p-6 md:p-8 text-white shadow-xl shadow-pink-600/20 relative overflow-hidden">
+                        <div class="relative z-10">
+                            <h1 class="text-xl md:text-3xl font-extrabold mb-2">${t.welcomeBack} ${appState.student.name || 'Student'}! 👋</h1>
+                            <p class="text-pink-100 text-sm md:text-base max-w-xl mb-6">Roll the dice, solve English questions, and complete your Bingo board to master vocabulary and grammar!</p>
+                            <button id="start-quick-dice" class="px-6 py-3 bg-white text-pink-700 font-bold rounded-xl shadow-md hover:bg-pink-50 transition text-sm">
+                                <i class="fa-solid fa-dice mr-2"></i> ${t.startQuizBtn}
+                            </button>
+                        </div>
+                        <div class="absolute right-0 bottom-0 opacity-10 transform translate-x-6 translate-y-6">
+                            <i class="fa-solid fa-dice text-9xl"></i>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">${t.totalDone}</span>
+                                <i class="fa-solid fa-list-check text-pink-600 dark:text-pink-400"></i>
+                            </div>
+                            <div class="text-2xl font-extrabold text-slate-900 dark:text-white">${appState.stats.totalDone}</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">${t.accuracy}</span>
+                                <i class="fa-solid fa-bullseye text-emerald-600 dark:text-emerald-400"></i>
+                            </div>
+                            <div class="text-2xl font-extrabold text-slate-900 dark:text-white">${accuracy}%</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">${t.totalScore}</span>
+                                <i class="fa-solid fa-trophy text-amber-500"></i>
+                            </div>
+                            <div class="text-2xl font-extrabold text-slate-900 dark:text-white">${appState.stats.totalScore}</div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase">${t.bingosCompleted}</span>
+                                <i class="fa-solid fa-award text-pink-500"></i>
+                            </div>
+                            <div class="text-2xl font-extrabold text-slate-900 dark:text-white">${appState.stats.bingosCompleted}</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4">${t.selectLevelTitle}</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            ${levels.map(lvl => `
+                                <div class="level-card bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm hover:border-pink-500 transition cursor-pointer flex flex-col justify-between" data-level="${lvl}">
+                                    <div>
+                                        <div class="flex items-center justify-between mb-3">
+                                            <span class="px-3 py-1 bg-pink-50 dark:bg-pink-950/50 text-pink-600 dark:text-pink-400 font-bold text-xs rounded-lg uppercase">${lvl}</span>
+                                            <i class="fa-solid fa-chevron-right text-slate-400 text-sm"></i>
+                                        </div>
+                                        <h4 class="font-bold text-slate-900 dark:text-white text-base mb-1">Level ${lvl.charAt(0) + lvl.slice(1).toLowerCase()}</h4>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400">Roll dice & solve ${lvl.toLowerCase()} challenges.</p>
+                                    </div>
+                                    <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700/50 flex items-center justify-between text-xs font-medium text-pink-600 dark:text-pink-400">
+                                        <span>Play Dice Bingo</span>
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderProfileView() {
+            const t = translations[appState.lang];
+            return `
+                <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm max-w-2xl mx-auto">
+                    <div class="flex items-center space-x-4 mb-6 pb-6 border-b border-slate-200 dark:border-slate-700">
+                        <div class="w-16 h-16 bg-pink-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg shadow-pink-500/30">
+                            ${appState.student.name ? appState.student.name.charAt(0).toUpperCase() : 'S'}
+                        </div>
+                        <div>
+                            <h2 class="text-xl font-bold text-slate-900 dark:text-white">${appState.student.name || 'Student'}</h2>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">${appState.student.school || 'Madrasah/School not set'}</p>
+                        </div>
+                    </div>
+
+                    <form id="profile-form" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.nameLabel}</label>
+                            <input type="text" id="prof-name" value="${appState.student.name}" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.classLabel}</label>
+                                <select id="prof-class" class="w-full px-3 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+                                    ${['4','5','6','7','8','9','10','11','12'].map(c => `<option value="${c}" ${appState.student.className === c ? 'selected' : ''}>Kelas ${c}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.attendanceLabel}</label>
+                                <input type="text" id="prof-attendance" value="${appState.student.attendanceNumber}" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-1">${t.schoolLabel}</label>
+                            <input type="text" id="prof-school" value="${appState.student.school}" class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-900 text-slate-900 dark:text-white text-sm focus:ring-2 focus:ring-pink-500 outline-none">
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                            Simpan Perubahan / Save Changes
+                        </button>
+                    </form>
+                </div>
+            `;
+        }
+
+        function renderLearnView() {
+            return `
+                <div class="space-y-6 max-w-4xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <span class="px-3 py-1 bg-pink-50 dark:bg-pink-950 text-pink-600 dark:text-pink-400 font-bold text-xs rounded-lg uppercase">Learn & Practice</span>
+                        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white mt-2 mb-4">How to Play Dice Bingo</h2>
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed mb-6">
+                            Dice Bingo combines random dice rolls with a 3x3 Bingo grid challenge. Roll the dice to unlock grid cells, answer English vocabulary and grammar questions correctly to mark cells, and complete rows or diagonals to achieve Bingo!
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                <h4 class="font-bold text-pink-600 dark:text-pink-400 mb-2"><i class="fa-solid fa-dice mr-2"></i> Roll the Dice</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Click the dice button to generate numbers and trigger questions.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                <h4 class="font-bold text-pink-600 dark:text-pink-400 mb-2"><i class="fa-solid fa-square-check mr-2"></i> Mark the Grid</h4>
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Answer correctly to stamp your Bingo board and gain score points.</p>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 text-center">
+                            <button id="go-to-play" class="px-6 py-3 bg-pink-600 text-white font-bold rounded-xl shadow-lg hover:bg-pink-700 transition text-sm">
+                                Start Dice Bingo Game <i class="fa-solid fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPlayView() {
+            const levels = ['STARTER', 'BEGINNER', 'ELEMENTARY', 'PRE-INTERMEDIATE', 'INTERMEDIATE', 'ADVANCED'];
+            const modes = [
+                { id: 'Vocabulary Bingo', name: 'Vocabulary Bingo', desc: 'Master everyday objects, animals, and terms', icon: 'fa-book' },
+                { id: 'Grammar Bingo', name: 'Grammar Bingo', desc: 'Practice tenses, adjectives, and syntax', icon: 'fa-pen-nib' },
+                { id: 'Spelling Bingo', name: 'Spelling Bingo', desc: 'Verify correct word spellings', icon: 'fa-spell-check' },
+                { id: 'Reading Bingo', name: 'Reading Bingo', desc: 'Short passages and comprehension logic', icon: 'fa-glasses' },
+                { id: 'Listening Bingo', name: 'Listening Bingo', desc: 'Contextual sentence analysis', icon: 'fa-headphones' }
+            ];
+
+            return `
+                <div class="space-y-6 max-w-5xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white mb-2">Select Difficulty Level & Bingo Mode</h2>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm mb-6">Choose your preferred level and mode to launch the interactive Dice Bingo board.</p>
+
+                        <div class="mb-6">
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3">Difficulty Level</label>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+                                ${levels.map(lvl => `
+                                    <button class="play-level-btn px-4 py-3 rounded-xl border font-bold text-xs uppercase transition ${appState.game.level === lvl ? 'bg-pink-600 text-white border-pink-600 shadow-md' : 'bg-slate-50 dark:bg-slate-700/50 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-pink-500'}" data-level="${lvl}">
+                                        ${lvl}
+                                    </button>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-600 dark:text-slate-400 mb-3">Bingo Modes</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${modes.map(m => `
+                                    <div class="play-mode-card bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-200 dark:border-slate-600 hover:border-pink-500 transition cursor-pointer flex items-start space-x-3" data-mode="${m.id}">
+                                        <div class="w-10 h-10 bg-pink-600 text-white rounded-xl flex items-center justify-center shrink-0">
+                                            <i class="fa-solid ${m.icon}"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1">${m.name}</h4>
+                                            <p class="text-xs text-slate-500 dark:text-slate-400">${m.desc}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBingoGridView() {
+            const t = translations[appState.lang];
+            const board = appState.game.bingoBoard;
+            const currentQ = appState.game.currentQuestion;
+
+            return `
+                <div class="max-w-4xl mx-auto space-y-6">
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-xs font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider">${appState.game.level} — ${appState.game.mode}</span>
+                            <h3 class="text-base font-extrabold text-slate-900 dark:text-white">Dice & Bingo Challenge</h3>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="text-right">
+                                <span class="text-xs text-slate-500 dark:text-slate-400 block">${t.score}</span>
+                                <span class="text-lg font-extrabold text-slate-900 dark:text-white">${appState.game.scoreThisSession}</span>
+                            </div>
+                            <button id="quit-game" class="text-slate-400 hover:text-rose-600 p-2"><i class="fa-solid fa-xmark text-lg"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Left/Top: Dice Roller & Status -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center space-y-4">
+                            <div id="dice-box" class="w-24 h-24 bg-pink-600 text-white rounded-3xl flex items-center justify-center text-4xl shadow-xl shadow-pink-600/30 ${appState.game.isRolling ? 'rolling' : ''}">
+                                <i class="fa-solid fa-dice-${appState.game.diceValue === 1 ? 'one' : appState.game.diceValue === 2 ? 'two' : appState.game.diceValue === 3 ? 'three' : appState.game.diceValue === 4 ? 'four' : appState.game.diceValue === 5 ? 'five' : 'six'}"></i>
+                            </div>
+                            <button id="roll-dice-btn" class="w-full py-3 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                                <i class="fa-solid fa-dice mr-2"></i> ${t.rollDiceBtn}
+                            </button>
+                            <p class="text-xs text-slate-500 text-center">Roll the dice to select a Bingo grid cell and answer its question!</p>
+                        </div>
+
+                        <!-- Right/Center: 3x3 Bingo Board -->
+                        <div class="md:col-span-2 bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <h4 class="font-bold text-slate-900 dark:text-white text-sm mb-4">Bingo Board (3x3)</h4>
+                            <div class="grid grid-cols-3 gap-3">
+                                ${board.map((cell, idx) => {
+                                    let bgClass = "bg-slate-50 dark:bg-slate-700/50 border-slate-200 dark:border-slate-600 text-slate-800 dark:text-slate-200 hover:border-pink-500";
+                                    if (cell.marked) {
+                                        bgClass = "bg-emerald-500 text-white border-emerald-600 font-bold shadow-md";
+                                    } else if (appState.game.selectedCell === idx) {
+                                        bgClass = "bg-pink-50 dark:bg-pink-950/50 border-pink-500 text-pink-700 dark:text-pink-300 font-bold shadow-sm";
+                                    }
+                                    return `
+                                        <button class="bingo-cell h-24 rounded-xl border text-xs font-semibold p-2 flex flex-col items-center justify-center transition text-center ${bgClass}" data-index="${idx}">
+                                            <span class="text-[10px] opacity-70 mb-1">Cell #${idx + 1}</span>
+                                            <span class="truncate w-full">${cell.question.vocabulary || 'Word'}</span>
+                                            ${cell.marked ? '<i class="fa-solid fa-check mt-1"></i>' : ''}
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Modal / Panel if cell selected -->
+                    ${currentQ ? `
+                        <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl border border-pink-500 shadow-xl space-y-6">
+                            <div class="flex items-center justify-between">
+                                <span class="px-3 py-1 bg-pink-50 dark:bg-pink-950 text-pink-600 dark:text-pink-400 text-xs font-bold rounded-lg uppercase">${currentQ.category || appState.game.mode}</span>
+                                <button id="hint-btn" class="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center space-x-1">
+                                    <i class="fa-solid fa-lightbulb"></i><span>${t.hintBtn}</span>
+                                </button>
+                            </div>
+
+                            ${appState.game.showHint ? `
+                                <div class="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl text-xs text-amber-800 dark:text-amber-300">
+                                    <i class="fa-solid fa-info-circle mr-1"></i> <strong>Hint:</strong> ${currentQ.hint}
+                                </div>
+                            ` : ''}
+
+                            <h3 class="text-lg font-bold text-slate-900 dark:text-white leading-relaxed">${currentQ.question}</h3>
+
+                            <div class="grid grid-cols-1 gap-3">
+                                ${currentQ.options.map((opt, idx) => {
+                                    let btnClass = "border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-700/50 text-slate-800 dark:text-slate-200 hover:border-pink-500";
+                                    if (appState.game.selectedOption === idx) {
+                                        btnClass = "border-pink-600 bg-pink-50 dark:bg-pink-950/50 text-pink-700 dark:text-pink-300 font-bold shadow-sm";
+                                    }
+                                    if (appState.game.isAnswerChecked) {
+                                        if (idx === currentQ.correctAnswerIndex) {
+                                            btnClass = "border-emerald-500 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 font-bold";
+                                        } else if (appState.game.selectedOption === idx) {
+                                            btnClass = "border-rose-500 bg-rose-50 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300";
+                                        }
+                                    }
+                                    return `
+                                        <button class="quiz-option-btn w-full p-4 rounded-xl border text-left text-sm transition flex items-center justify-between ${btnClass}" data-index="${idx}" ${appState.game.isAnswerChecked ? 'disabled' : ''}>
+                                            <span>${opt}</span>
+                                            <span class="w-6 h-6 rounded-full border border-slate-300 dark:border-slate-600 flex items-center justify-center text-xs font-bold">${String.fromCharCode(65 + idx)}</span>
+                                        </button>
+                                    `;
+                                }).join('')}
+                            </div>
+
+                            ${appState.game.isAnswerChecked ? `
+                                <div class="p-4 rounded-xl ${appState.game.isCorrect ? 'bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300' : 'bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300'}">
+                                    <div class="font-bold text-sm mb-1">${appState.game.isCorrect ? t.correct : t.incorrect}</div>
+                                    <p class="text-xs leading-relaxed">${currentQ.explanation}</p>
+                                </div>
+                            ` : ''}
+
+                            <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-700">
+                                ${!appState.game.isAnswerChecked ? `
+                                    <button id="check-answer-btn" class="px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl shadow-md transition text-sm ${appState.game.selectedOption === null ? 'opacity-50 cursor-not-allowed' : ''}" ${appState.game.selectedOption === null ? 'disabled' : ''}>
+                                        ${t.checkAnswer}
+                                    </button>
+                                ` : `
+                                    <button id="next-bingo-turn" class="px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                                        Continue Dice Bingo
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderVocabBankView() {
+            const allVocab = [];
+            questionBank.forEach(q => {
+                if (q.vocabulary) {
+                    allVocab.push({ word: q.vocabulary, translation: q.translation || '-', level: q.level, mode: q.mode });
+                }
+            });
+
+            return `
+                <div class="space-y-6 max-w-4xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Vocabulary Bank</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Review English vocabulary encountered across Dice Bingo challenges.</p>
+                        </div>
+                        <div class="w-12 h-12 bg-pink-50 dark:bg-pink-950 text-pink-600 dark:text-pink-400 rounded-2xl flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-box-archive"></i>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${allVocab.map(v => `
+                            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                                <div>
+                                    <span class="px-2.5 py-0.5 bg-pink-50 dark:bg-pink-950 text-pink-600 dark:text-pink-400 text-[10px] font-bold rounded-md uppercase">${v.level}</span>
+                                    <h4 class="font-extrabold text-slate-900 dark:text-white text-base mt-2">${v.word}</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">ID: ${v.translation}</p>
+                                </div>
+                                <span class="text-xs font-semibold text-slate-400">${v.mode}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderJournalView() {
+            const history = appState.stats.history || [];
+            return `
+                <div class="space-y-6 max-w-4xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">My Learning Journal</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Review past Dice Bingo game sessions.</p>
+                    </div>
+
+                    ${history.length === 0 ? `
+                        <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 text-center text-slate-500 text-sm">
+                            No game sessions recorded yet. Start playing Dice Bingo to record your journal!
+                        </div>
+                    ` : `
+                        <div class="space-y-3">
+                            ${history.map(h => `
+                                <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between">
+                                    <div>
+                                        <span class="text-xs font-bold text-pink-600 dark:text-pink-400 uppercase">${h.level}</span>
+                                        <span class="text-xs text-slate-400 ml-2">${h.date}</span>
+                                        <div class="text-sm font-bold text-slate-900 dark:text-white mt-1">Score: ${h.score} | Correct: ${h.correct}/${h.total}</div>
+                                    </div>
+                                    <span class="px-3 py-1 bg-emerald-50 dark:bg-emerald-950 text-emerald-600 text-xs font-bold rounded-lg">${h.accuracy}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderProgressView() {
+            const accuracy = appState.stats.totalDone > 0 ? Math.round((appState.stats.correctCount / appState.stats.totalDone) * 100) : 0;
+            return `
+                <div class="space-y-6 max-w-4xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">My Progress</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Overall game analytics and statistics.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <span class="text-xs font-semibold text-slate-500 uppercase block mb-1">Total Questions Answered</span>
+                            <span class="text-3xl font-extrabold text-slate-900 dark:text-white">${appState.stats.totalDone}</span>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <span class="text-xs font-semibold text-slate-500 uppercase block mb-1">Overall Accuracy</span>
+                            <span class="text-3xl font-extrabold text-emerald-600">${accuracy}%</span>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                            <span class="text-xs font-semibold text-slate-500 uppercase block mb-1">Total Score Accumulated</span>
+                            <span class="text-3xl font-extrabold text-amber-500">${appState.stats.totalScore}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAchievementsView() {
+            return `
+                <div class="space-y-6 max-w-4xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm">
+                        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">Achievements & Badges</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Unlock badges as you complete Dice Bingo milestones.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        ${appState.stats.badges.map(b => `
+                            <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl border ${b.earned ? 'border-emerald-500/50 bg-emerald-50/20 dark:bg-emerald-950/10' : 'border-slate-200 dark:border-slate-700 opacity-60'} shadow-sm flex items-center space-x-4">
+                                <div class="w-14 h-14 rounded-2xl ${b.earned ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'bg-slate-200 dark:bg-slate-700 text-slate-400'} flex items-center justify-center text-xl shrink-0">
+                                    <i class="fa-solid ${b.icon}"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-slate-900 dark:text-white text-base">${b.title}</h4>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">${b.desc}</p>
+                                    <span class="inline-block mt-2 text-[10px] font-bold px-2.5 py-0.5 rounded-md ${b.earned ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-200' : 'bg-slate-100 text-slate-600 dark:text-slate-300'}">
+                                        ${b.earned ? 'Unlocked' : 'Locked'}
+                                    </span>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCertificatesView() {
+            const t = translations[appState.lang];
+            return `
+                <div class="space-y-6 max-w-3xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl border-4 border-pink-600 shadow-xl text-center space-y-6 relative overflow-hidden">
+                        <div class="absolute top-4 left-4 text-pink-600 opacity-20"><i class="fa-solid fa-award text-7xl"></i></div>
+                        <div class="absolute bottom-4 right-4 text-pink-600 opacity-20"><i class="fa-solid fa-dice text-7xl"></i></div>
+
+                        <div class="relative z-10 space-y-2">
+                            <span class="text-xs font-extrabold uppercase tracking-widest text-pink-600">DICE BINGO Educational Application</span>
+                            <h2 class="text-3xl font-extrabold text-slate-900 dark:text-white">${t.certificateTitle}</h2>
+                            <p class="text-xs text-slate-500 dark:text-slate-400">${t.certText}</p>
+                            <h3 class="text-2xl font-bold text-pink-600 dark:text-pink-400 border-b-2 border-pink-200 dark:border-pink-800 inline-block px-6 py-1">${appState.student.name || 'Student Name'}</h3>
+                            <p class="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto mt-4 leading-relaxed">
+                                ${t.certBody}
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-8 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500">
+                            <div>
+                                <span class="font-bold block text-slate-800 dark:text-slate-200">Ahmad Budi Leksono</span>
+                                <span>Application Creator</span>
+                            </div>
+                            <div>
+                                <span class="font-bold block text-slate-800 dark:text-slate-200">${appState.student.school || 'Madrasah/School'}</span>
+                                <span>Class ${appState.student.className}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button onclick="window.print()" class="px-6 py-3 bg-pink-600 hover:bg-pink-700 text-white font-bold rounded-xl shadow-md transition text-sm">
+                            <i class="fa-solid fa-print mr-2"></i> ${t.printCert}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSettingsView() {
+            const t = translations[appState.lang];
+            return `
+                <div class="space-y-6 max-w-2xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm space-y-6">
+                        <h2 class="text-xl font-extrabold text-slate-900 dark:text-white">${t.settings}</h2>
+
+                        <div class="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-700">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">Language / Bahasa</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Switch between English and Bahasa Indonesia</p>
+                            </div>
+                            <button id="settings-lang-btn" class="px-4 py-2 bg-pink-50 dark:bg-slate-700 text-pink-600 dark:text-pink-300 font-bold text-xs rounded-xl hover:bg-pink-100 transition">
+                                ${appState.lang === 'id' ? 'English' : 'Bahasa Indonesia'}
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between py-3 border-b border-slate-100 dark:border-slate-700">
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-900 dark:text-white">${t.themeToggle}</h4>
+                                <p class="text-xs text-slate-500 dark:text-slate-400">Toggle dark or light display mode</p>
+                            </div>
+                            <button id="settings-theme-btn" class="px-4 py-2 bg-pink-50 dark:bg-slate-700 text-pink-600 dark:text-pink-300 font-bold text-xs rounded-xl hover:bg-pink-100 transition">
+                                ${appState.darkMode ? 'Light Mode' : 'Dark Mode'}
+                            </button>
+                        </div>
+
+                        <div class="pt-4">
+                            <button id="reset-progress-btn" class="px-4 py-2 bg-rose-50 dark:bg-rose-950/30 text-rose-600 font-bold text-xs rounded-xl hover:bg-rose-100 transition">
+                                ${t.resetData}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAboutView() {
+            return `
+                <div class="space-y-6 max-w-2xl mx-auto">
+                    <div class="bg-white dark:bg-slate-800 p-8 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm text-center space-y-4">
+                        <div class="w-16 h-16 bg-pink-600 text-white rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold shadow-lg shadow-pink-500/30">
+                            <i class="fa-solid fa-dice"></i>
+                        </div>
+                        <h2 class="text-2xl font-extrabold text-slate-900 dark:text-white">DICE BINGO</h2>
+                        <span class="text-xs font-bold text-pink-600 uppercase tracking-widest block">Interactive English Learning & Dice Challenge</span>
+                        
+                        <p class="text-slate-600 dark:text-slate-300 text-sm leading-relaxed max-w-lg mx-auto pt-2">
+                            DICE BINGO is an educational web application designed for Madrasah and school students to master English vocabulary, spelling, grammar, and reading comprehension through interactive dice rolling and Bingo board strategy.
+                        </p>
+
+                        <div class="pt-6 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-500">
+                            Created by <strong class="text-slate-800 dark:text-slate-200">Ahmad Budi Leksono</strong>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function attachEventListeners() {
+            const identityForm = document.getElementById('identity-form');
+            if (identityForm) {
+                identityForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    const name = document.getElementById('input-name').value.trim();
+                    const cls = document.getElementById('input-class').value;
+                    const att = document.getElementById('input-attendance').value.trim();
+                    const sch = document.getElementById('input-school').value.trim();
+
+                    if (!name || !sch) return;
+
+                    appState.student.name = name;
+                    appState.student.className = cls;
+                    appState.student.attendanceNumber = att;
+                    appState.student.school = sch;
+                    appState.currentView = 'dashboard';
+                    saveState();
+                    render();
+                };
+            }
+
+            const langToggleBtn = document.getElementById('lang-toggle-btn');
+            if (langToggleBtn) {
+                langToggleBtn.onclick = () => {
+                    appState.lang = appState.lang === 'id' ? 'en' : 'id';
+                    render();
+                };
+            }
+
+            const headerLang = document.getElementById('header-lang-toggle');
+            if (headerLang) {
+                headerLang.onclick = () => {
+                    appState.lang = appState.lang === 'id' ? 'en' : 'id';
+                    render();
+                };
+            }
+
+            const headerTheme = document.getElementById('header-theme-toggle');
+            if (headerTheme) {
+                headerTheme.onclick = () => {
+                    appState.darkMode = !appState.darkMode;
+                    saveState();
+                    render();
+                };
+            }
+
+            document.querySelectorAll('[data-nav]').forEach(btn => {
+                btn.onclick = () => {
+                    appState.currentView = btn.getAttribute('data-nav');
+                    render();
+                };
+            });
+
+            const logoutBtn = document.getElementById('sidebar-logout');
+            if (logoutBtn) {
+                logoutBtn.onclick = () => {
+                    appState.currentView = 'welcome';
+                    render();
+                };
+            }
+
+            document.querySelectorAll('.level-card').forEach(card => {
+                card.onclick = () => {
+                    const lvl = card.getAttribute('data-level');
+                    startDiceGame(lvl, 'Vocabulary Bingo');
+                };
+            });
+
+            const startQuickDice = document.getElementById('start-quick-dice');
+            if (startQuickDice) {
+                startQuickDice.onclick = () => {
+                    startDiceGame('STARTER', 'Vocabulary Bingo');
+                };
+            }
+
+            const goToPlay = document.getElementById('go-to-play');
+            if (goToPlay) {
+                goToPlay.onclick = () => {
+                    appState.currentView = 'play';
+                    render();
+                };
+            }
+
+            document.querySelectorAll('.play-level-btn').forEach(btn => {
+                btn.onclick = () => {
+                    appState.game.level = btn.getAttribute('data-level');
+                    render();
+                };
+            });
+
+            document.querySelectorAll('.play-mode-card').forEach(card => {
+                card.onclick = () => {
+                    const mode = card.getAttribute('data-mode');
+                    startDiceGame(appState.game.level, mode);
+                };
+            });
+
+            // Profile Form
+            const profileForm = document.getElementById('profile-form');
+            if (profileForm) {
+                profileForm.onsubmit = (e) => {
+                    e.preventDefault();
+                    appState.student.name = document.getElementById('prof-name').value.trim();
+                    appState.student.className = document.getElementById('prof-class').value;
+                    appState.student.attendanceNumber = document.getElementById('prof-attendance').value.trim();
+                    appState.student.school = document.getElementById('prof-school').value.trim();
+                    saveState();
+                    alert("Profile updated successfully!");
+                };
+            }
+
+            // Game Actions
+            const quitGame = document.getElementById('quit-game');
+            if (quitGame) {
+                quitGame.onclick = () => {
+                    appState.currentView = 'dashboard';
+                    render();
+                };
+            }
+
+            const rollDiceBtn = document.getElementById('roll-dice-btn');
+            if (rollDiceBtn) {
+                rollDiceBtn.onclick = () => {
+                    appState.game.isRolling = true;
+                    render();
+                    setTimeout(() => {
+                        const roll = Math.floor(Math.random() * 6) + 1;
+                        appState.game.diceValue = roll;
+                        appState.game.isRolling = false;
+                        // Select cell based on roll modulo 9
+                        const targetCellIndex = (roll - 1) % 9;
+                        appState.game.selectedCell = targetCellIndex;
+                        appState.game.currentQuestion = appState.game.bingoBoard[targetCellIndex].question;
+                        appState.game.selectedOption = null;
+                        appState.game.isAnswerChecked = false;
+                        appState.game.showHint = false;
+                        render();
+                    }, 500);
+                };
+            }
+
+            const hintBtn = document.getElementById('hint-btn');
+            if (hintBtn) {
+                hintBtn.onclick = () => {
+                    appState.game.showHint = true;
+                    render();
+                };
+            }
+
+            document.querySelectorAll('.quiz-option-btn').forEach(btn => {
+                btn.onclick = () => {
+                    if (appState.game.isAnswerChecked) return;
+                    appState.game.selectedOption = parseInt(btn.getAttribute('data-index'));
+                    render();
+                };
+            });
+
+            const checkAnswerBtn = document.getElementById('check-answer-btn');
+            if (checkAnswerBtn) {
+                checkAnswerBtn.onclick = () => {
+                    const currentQ = appState.game.currentQuestion;
+                    const isCorrect = appState.game.selectedOption === currentQ.correctAnswerIndex;
+
+                    appState.game.isAnswerChecked = true;
+                    appState.game.isCorrect = isCorrect;
+
+                    appState.stats.totalDone++;
+                    if (isCorrect) {
+                        appState.stats.correctCount++;
+                        appState.game.correctThisSession++;
+                        appState.game.scoreThisSession += 10;
+                        appState.stats.totalScore += 10;
+                        appState.stats.streak++;
+                        // Mark cell on board
+                        if (appState.game.selectedCell !== null) {
+                            appState.game.bingoBoard[appState.game.selectedCell].marked = true;
+                        }
+                    } else {
+                        appState.stats.incorrectCount++;
+                        appState.game.incorrectThisSession++;
+                        appState.stats.streak = 0;
+                    }
+
+                    // Check achievements
+                    if (appState.stats.totalDone >= 1) appState.stats.badges[0].earned = true;
+                    if (appState.stats.totalScore >= 50) appState.stats.badges[2].earned = true;
+
+                    // Check if Bingo (all cells marked)
+                    const allMarked = appState.game.bingoBoard.every(c => c.marked);
+                    if (allMarked) {
+                        appState.stats.bingosCompleted++;
+                        appState.stats.badges[1].earned = true;
+                    }
+
+                    saveState();
+                    render();
+                };
+            }
+
+            const nextBingoTurn = document.getElementById('next-bingo-turn');
+            if (nextBingoTurn) {
+                nextBingoTurn.onclick = () => {
+                    appState.game.currentQuestion = null;
+                    appState.game.selectedCell = null;
+                    render();
+                };
+            }
+
+            // Settings & Reset
+            const settingsLang = document.getElementById('settings-lang-btn');
+            if (settingsLang) {
+                settingsLang.onclick = () => {
+                    appState.lang = appState.lang === 'id' ? 'en' : 'id';
+                    render();
+                };
+            }
+
+            const settingsTheme = document.getElementById('settings-theme-btn');
+            if (settingsTheme) {
+                settingsTheme.onclick = () => {
+                    appState.darkMode = !appState.darkMode;
+                    saveState();
+                    render();
+                };
+            }
+
+            const resetBtn = document.getElementById('reset-progress-btn');
+            if (resetBtn) {
+                resetBtn.onclick = () => {
+                    if (confirm("Are you sure you want to reset all game progress?")) {
+                        localStorage.clear();
+                        location.reload();
+                    }
+                };
+            }
+        }
+
+        function startDiceGame(level, mode) {
+            let pool = questionBank.filter(q => q.level === level);
+            if (pool.length < 9) {
+                pool = questionBank.filter(q => q.level === 'STARTER');
+            }
+            // Shuffle and pick 9 questions for 3x3 Bingo board
+            const shuffled = [...pool].sort(() => 0.5 - Math.random());
+            const board = shuffled.slice(0, 9).map(q => ({ question: q, marked: false }));
+
+            appState.game = {
+                level: level,
+                mode: mode,
+                diceValue: 1,
+                isRolling: false,
+                bingoBoard: board,
+                selectedCell: null,
+                currentQuestion: null,
+                selectedOption: null,
+                isAnswerChecked: false,
+                isCorrect: false,
+                scoreThisSession: 0,
+                correctThisSession: 0,
+                incorrectThisSession: 0,
+                showHint: false,
+                sessionSeconds: 0
+            };
+            appState.currentView = 'bingoGrid';
+            render();
+        }
+
+        window.onload = function() {
+            loadState();
+            startGlobalTimer();
+            if (appState.student.name && appState.currentView === 'welcome') {
+                appState.currentView = 'dashboard';
+            }
+            render();
+        };
+    </script>
+</body>
+</html>
